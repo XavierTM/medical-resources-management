@@ -300,7 +300,7 @@ suite('Functional tests', function() {
          accessToken = createAuthToken({ 
             type: USER_TYPES.CLERK, 
             id: clerk.id, 
-            institution: clerk.institution,
+            institution: institution.dataValues,
          });
 
       });
@@ -397,7 +397,7 @@ suite('Functional tests', function() {
          accessToken = createAuthToken({ 
             type: USER_TYPES.CLERK, 
             id: clerk.id, 
-            institution: clerk.institution,
+            institution: institution.dataValues,
          });
 
          xRayMachineResourceType = await createResourceType();

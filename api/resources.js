@@ -26,7 +26,7 @@ resources.post('/', async (req, res) => {
          
       // save data to DB
       const data = req.body;
-      data.institution = req.auth.user.institution;
+      data.institution = req.auth.user.institution.id;
       const clerk = await Resource.create(data);
 
       res.send({ id: clerk.id })
@@ -42,7 +42,7 @@ resources.get('/', async (req, res) => {
 
       let resources = await Resource.findAll({ 
          attributes: [ 'id', 'name' ],
-         where: { institution: req.auth.user.institution },
+         where: { institution: req.auth.user.institution.id },
          include: {
             model: ResourceType,
             attributes: [ 'id', 'name' ],

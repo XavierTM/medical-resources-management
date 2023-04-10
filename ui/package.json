@@ -14,9 +14,16 @@
     "@xavisoft/app-wrapper": "^0.1.0",
     "@xavisoft/auth": "^1.3.0",
     "@xavisoft/react-component": "^0.1.0",
+    "axios": "^1.3.5",
+    "notiflix": "^3.2.6",
+    "notyf": "^3.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-pro-sidebar": "^1.0.0",
+    "react-redux": "^8.0.5",
     "react-scripts": "5.0.1",
+    "redux": "^4.2.1",
+    "sweetalert": "^2.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -42,5 +49,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:8080"
 }

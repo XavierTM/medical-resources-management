@@ -5,6 +5,7 @@ const Joi = require("@xavisoft/joi");
 const admin_auth = require("./auth/admin_auth");
 const Clerk = require('./db/Clerk');
 const Institution = require("./db/Institution");
+const { hash } = require("bcrypt");
 
 
 const clerks = Router();
@@ -30,6 +31,8 @@ clerks.post('/', async (req, res) => {
       // save data to DB
       const data = req.body;
       data.email = data.email.toLowerCase();
+      const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS);
+      data.password = await hash(data.password, saltRounds);
       const clerk = await Clerk.create(data);
 
       res.send({ id: clerk.id })
@@ -41,8 +44,6 @@ clerks.post('/', async (req, res) => {
 
 clerks.get('/', async (req, res) => {
    try {
-
-
       let clerks = await Clerk.findAll({
          include: {
             model: Institution,

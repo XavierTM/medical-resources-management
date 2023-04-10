@@ -7,14 +7,18 @@ const Institution = require("./Institution");
 const Resource = require("./Resource");
 const ResourceType = require("./ResourceType");
 
-let dialect;
+let storage;
 
 if (process.env.NODE_ENV === 'test')
-   dialect = 'sqlite::memory';
+   storage = ':memory:';
 else
-   dialect = `sqlite::${__dirname}/db.sqlite`;
+   storage = `${__dirname}/db.sqlite`;
 
-const sequelize = new Sequelize(dialect, { logging: false });
+const sequelize = new Sequelize('', '', '', { 
+   dialect: 'sqlite',
+   storage,
+   logging: false
+});
 
 
 async function init() {

@@ -30,7 +30,7 @@ async function getResourceSchedules(id, from, to) {
                   [Op.lte]: from
                },
                to: {
-                  [Op.gte]: from
+                  [Op.gt]: from
                }
             },
             {
@@ -38,7 +38,7 @@ async function getResourceSchedules(id, from, to) {
                   [Op.lte]: to
                },
                to: {
-                  [Op.gte]: to
+                  [Op.gt]: to
                }
             }
          ]
@@ -70,7 +70,7 @@ bookings.get('/free-slots', async (req, res) => {
       // validation
       const payload = {
          duration: parseInt(req.query.duration),
-         earliest: parseInt(req.query.duration) || Date.now(),
+         earliest: parseInt(req.query.from) || Date.now(),
          resource_types: (req.query.resource_types || '').split(',').map(item => parseInt(item)),
       };
 
@@ -121,7 +121,8 @@ bookings.get('/free-slots', async (req, res) => {
             for (let i in resources) {
                
                const resource = resources[i];
-               const schedules = await getResourceSchedules(resource.id);
+               const schedules = await getResourceSchedules(resource.id, preferredScheduleStart, preferredScheduleEnd);
+      
 
                if (schedules.length === 0) {
                   resourceFreeTheEarliest.free_at = Date.now();
@@ -129,15 +130,21 @@ bookings.get('/free-slots', async (req, res) => {
                   break;
                }
 
-               for (let i = 1; i < schedules.length; i++) {
+
+               let free_at = 0;
+
+               for (let i = 0; i < schedules.length; i++) {
 
                   const schedule = schedules[i];
                   
-                  if (!resourceFreeTheEarliest.resource || resourceFreeTheEarliest.free_at > schedule.to) {
-                     resourceFreeTheEarliest.resource = resource;
-                     resourceFreeTheEarliest.free_at = schedule.to;
-                  }
+                  if (schedule.to > free_at)
+                     free_at = schedule.to;
                      
+               }
+
+               if (!resourceFreeTheEarliest.resource || resourceFreeTheEarliest.free_at > free_at) {
+                  resourceFreeTheEarliest.resource = resource;
+                  resourceFreeTheEarliest.free_at = free_at;
                }
 
             }
@@ -153,6 +160,7 @@ bookings.get('/free-slots', async (req, res) => {
          if (resourcesFreeTheEarliest.length === payload.resource_types.length) {
 
             let available_at = Date.now();
+
             const resources = resourcesFreeTheEarliest.map(resourceFreeTheEarliest => {
                const { free_at, resource } = resourceFreeTheEarliest;
 
@@ -164,12 +172,16 @@ bookings.get('/free-slots', async (req, res) => {
 
             });
 
+
+            if (available_at < preferredScheduleStart)
+               available_at = preferredScheduleStart;
+
             freeSlots.push({
                id: institution.id,
                name: institution.name,
                available_at,
                resources,
-            })
+            });
          }
          
 
@@ -225,7 +237,7 @@ bookings.post('/', async (req, res) => {
          from,
          to,
          booked_on: req.body.book_on,
-         booked_for: req.auth.user.institution,
+         booked_for: req.auth.user.institution.id,
       });
 
       /// create booking resources
@@ -252,7 +264,7 @@ bookings.get('/', async (req, res) => {
       // get booking
       let bookings = await Booking.findAll({
          where: {
-            booked_for: req.auth.user.institution,
+            booked_for: req.auth.user.institution.id,
          },
          attributes: [ 'id', 'from', 'to' ],
          include: [

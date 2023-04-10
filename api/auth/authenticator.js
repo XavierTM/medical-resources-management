@@ -2,6 +2,7 @@ const { compare } = require("bcrypt");
 const Joi = require('@xavisoft/joi');
 const Clerk = require("../db/Clerk");
 const { USER_TYPES } = require("../constants");
+const Institution = require("../db/Institution");
 
 
 
@@ -32,7 +33,13 @@ async function getUserInfo(credentials) {
 
    } else {
 
-      const user = await Clerk.findOne({ where: { email } });
+      const user = await Clerk.findOne({ 
+         where: { email },
+         include: {
+            model: Institution,
+            attributes: [ 'id', 'name' ]
+         }
+      });
 
       if (!user)
          return null;
@@ -43,7 +50,7 @@ async function getUserInfo(credentials) {
          return null;
 
       id = user.id;
-      institution = user.institution;
+      institution = user.Institution.dataValues;
       type = USER_TYPES.CLERK;
 
    }
