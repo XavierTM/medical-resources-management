@@ -6,5 +6,5 @@ npm run build
 cd ..
 
 @REM put static files on backend
-rd /S /Q api/static
+rmdir api/static -Recurse -Force
 move ui/build api/static
