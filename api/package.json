@@ -15,6 +15,7 @@
     "@xavisoft/auth": "^1.3.0",
     "@xavisoft/joi": "^0.1.0",
     "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
     "sequelize": "^6.30.0",
