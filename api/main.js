@@ -21,6 +21,8 @@ const app = express();
 if (process.env.NODE_ENV !== 'test')
    app.use(morgan('dev'));
 
+app.use(express.static(`${__dirname}/static`));
+
 app.use(express.json());
 initAuth(app);
 
@@ -30,6 +32,11 @@ app.use('/api/clerks', clerks);
 app.use('/api/resource-types', resource_types);
 app.use('/api/resources', resources);
 app.use('/api/bookings', bookings);
+
+app.get('*', (req, res) => {
+   const indexFile = `${__dirname}/static/index.html`;
+   res.sendFile(indexFile);
+});
 
 
 // initialization
