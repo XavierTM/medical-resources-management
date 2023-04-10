@@ -7,4 +7,4 @@ cd ..
 
 @REM put static files on backend
 rd /S /Q api/static
-move /Y ui/build api/static
+move ui/build api/static
