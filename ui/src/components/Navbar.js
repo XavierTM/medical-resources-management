@@ -33,7 +33,7 @@ class Navbar extends Component {
       let jsx;
 
       if (this.props.currentRoute.indexOf('-dashboard') === -1)
-         jsx = <h1><b style={{ color: 'silver' }}>MEDICAL</b> <b>BOOKING</b></h1>
+         jsx = <h1><b >COMPLEX MEDICAL CARE</b></h1>
       
       return <AppBar style={{ paddingLeft: 20 }} id="navbar">
          {jsx}
